@@ -10,7 +10,7 @@ $ErrorActionPreference = "Stop"
 
 # See https://github.com/docToolchain/docToolchain/releases for available versions.
 # Set DTC_VERSION to "latest" to get the latest, yet unreleased version.
-$DTC_VERSION = "latestdev"
+$DTC_VERSION = "latest"
 if ($env:DTC_VERSION) { $DTC_VERSION = $env:DTC_VERSION }
 
 #here you can specify the URL of a theme to use with generateSite-task
