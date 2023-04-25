@@ -1,0 +1,18 @@
+== manual test steps
+
+[source, bash]
+----
+./dtcw
+./dtcw local install doctoolchain
+./dtcw local install java
+./dtcw downloadTemplate
+# verify docToolchainConfig.groovy
+# verify ./src/docs
+./dtcw generateHTML
+# verify ./build/html5
+./dtcw generatePDF
+# verify ./build/pdf
+./dtcw generateSite
+# verify ./build/microsite/output
+
+----
