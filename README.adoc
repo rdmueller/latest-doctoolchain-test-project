@@ -2,17 +2,17 @@
 
 [source, bash]
 ----
-./dtcw
-./dtcw local install doctoolchain
-./dtcw local install java
-./dtcw downloadTemplate
+./dtcw ✅
+./dtcw local install doctoolchain ✅
+./dtcw local install java ✅
+./dtcw downloadTemplate ✅
 # verify docToolchainConfig.groovy
 # verify ./src/docs
-./dtcw generateHTML
+./dtcw generateHTML ✅
 # verify ./build/html5
-./dtcw generatePDF
+./dtcw generatePDF ❌
 # verify ./build/pdf
-./dtcw generateSite
+./dtcw generateSite ❌
 # verify ./build/microsite/output
 
 ----
