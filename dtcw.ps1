@@ -3,7 +3,6 @@
 
 $ErrorActionPreference = "Stop"
 
-
 # The main purpose of the wrapper script is to make 'docToolchain' easy to use.
 # - it helps to install 'docToolchain' if not installed
 # - you may manage different 'docToolchain' environments
@@ -81,7 +80,7 @@ function main($_args) {
         install_component_and_exit $environment $_args
     } elseif ( $_args[0] -eq "getJava" ) {
         # TODO: remove getJava in the next major release
-        Write-Warn "Warning: 'getJava' is deprecated and and will be removed. Use './dtcw install java' instead."
+        Write-Warning "Warning: 'getJava' is deprecated and and will be removed. Use './dtcw install java' instead."
         install_component_and_exit $environment "java"
     }
     # No install command, so forward call to docToolchain but first we check if
@@ -96,14 +95,6 @@ function main($_args) {
     # TODO: can generateDeck, bakePreview be used in combination with other commands?
     # The code below assumes we have just one task.
 
-    if ( $_args[0] -eq "generateDeck" )
-    {
-        # TODO: is this still true? The Dockerfile at
-        # https://github.com/docToolchain/docker-image/blob/ng-beta/alpine/Dockerfile
-        # seems to install reaveal.js also in the docker image.
-        assert_reveal_js_installed $environment
-    }
-
     $command = build_command "$environment" "$DTC_VERSION" $_args
 
     #TODO: implement HEADLESS mode
@@ -117,7 +108,7 @@ function main($_args) {
 
 function assert_argument_exists($_args) {
     if ($_args.length -eq 0) {
-        Write-Error "argument missing"
+        Write-Warning "argument missing"
         usage
         exit $ERR_ARG
     }
@@ -128,7 +119,7 @@ function usage() {
 dtcw - Create awesome documentation the easy way with docToolchain.
 
 Usage: ./dtcw.ps1 [environment] [option...] [task...]
-./dtcw [local] install {doctoolchain | java | reveal.js}
+       ./dtcw.ps1 [local] install {doctoolchain | java }
 
 Use 'local' or 'docker' as first argument to force the use of a specific
 docToolchain environment:
@@ -282,9 +273,6 @@ function install_component_and_exit($environment, $component) {
                 "java" {
                     local_install_java
                 }
-                "reveal.js" {
-                    local_install_reveal_js
-                }
                 * {
                     error_install_component_and_die "unknown component '$component'"
                 }
@@ -314,13 +302,13 @@ function install_component_and_exit($environment, $component) {
 }
 
 function error_install_component_and_die($component) {
-    Write-Error  "$component - available components are 'doctoolchain', 'java' or 'reveal.js'"
+    Write-Error  "$component - available components are 'doctoolchain' or 'java'"
     Write-Host ""
     Write-Host "Use './dtcw.ps1 local install doctoolchain' to install docToolchain $DTC_VERSION."
     Write-Host "Use './dtcw.ps1 local install java' to install a Java version supported by docToolchain."
-    Write-Host "Use './dtcw.ps1 local install reveal.js' to install reveal.js."
     exit $ERR_ARG
 }
+
 function local_install_doctoolchain($version) {
     if (is_doctoolchain_development_version $version) {
         # User decided to pick a floating version - which means a git clone
@@ -413,7 +401,7 @@ unsupported Java version ${javaversion} [$JAVA_CMD]
 "@
         java_help_and_die
     } else {
-        if ([int]$javaversion -gt 14 ) {
+        if ([int]$javaversion -gt 17 ) {
             Write-Warning @"
 unsupported Java version ${javaversion} [$JAVA_CMD]
 "@
@@ -427,7 +415,7 @@ unsupported Java version ${javaversion} [$JAVA_CMD]
 function java_help_and_die()
 {
     Write-Host @"
-docToolchain supports Java versions 8, 11 (preferred) or 14. In case one of those
+docToolchain supports Java versions 8, 11 (preferred), 14 or 17. In case one of those
 Java versions is installed make sure 'java' is found with your PATH environment
 variable. As alternative you may provide the location of your Java installation
 with JAVA_HOME.
@@ -473,24 +461,6 @@ function local_install_java() {
     Write-Host "Successfully installed Java in '$DTC_JAVA_HOME'."
 }
 
-function local_install_reveal_js() {
-    assert_git_installed "Installing reveal.js depends on 'git' - please install 'git' (https://git-scm.com)."
-    if (Test-Path "$DTC_HOME\resources\reveal.js" ) {
-        Write-Host "reveal.js already installed"
-    } else {
-        # clone reveal.js
-        Write-Host "cloning reveal.js"
-        Invoke-Expression "Push-Location $DTC_HOME/resources/. ; ./clone.ps1 ; Pop-Location"
-        Write-Host @"
-
-Installed reveal.js successfully in '$DTC_HOME/resources'.
-
-Use './dtcw generateDeck' to create a slide deck with reveal.js.
-
-"@
-    }
-}
-
 function assert_doctoolchain_installed($environment, $version) {
 
     if ( (is_doctoolchain_installed $environment) -eq $False) {
@@ -511,10 +481,10 @@ following docToolchain environments:
 
 1. 'local': to install docToolchain in [$DTC_ROOT] use
 
-    > ./dtcw.ps1 local install doctoolchain"
+    > ./dtcw.ps1 local install doctoolchain
 
 Note that running docToolchain in 'local' environment needs a
-Java runtime (major version 8, 11, or 14) installed on your host.
+Java runtime (major version 8, 11, 14 or 17) installed on your host.
 
 2. 'docker': pull the docToolchain image and execute docToolchain in a container environment.
 
@@ -528,8 +498,8 @@ function build_command($environment, $version, $_args) {
     if ( $environment -eq "docker") {
         if (-not (Invoke-Expression "docker ps")) {
             Write-Host ""
-            Write-Host "Docker does not seem to be running, run it first and retry"
-            Write-Host "if you want to use a local installation of doctoolchain instead"
+            Write-Host "Docker does not seem to be running, run it first and retry again."
+            Write-Host "If you want to use a local installation of doctoolchain instead,"
             Write-Host "use 'local' as first argument to force the installation and use of a local install."
             Write-Host ""
             Write-Host "Example: ./dtcw.ps1 local install doctoolchain"
