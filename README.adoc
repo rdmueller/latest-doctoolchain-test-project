@@ -1,18 +1,76 @@
 == manual test steps
 
+if you already have a local doctoolchain installed:
+
 [source, bash]
 ----
+# update latest
+cd $HOME/.doctoolchain/docToolchain-latest
+git pull
+cd -
+----
+
+[source, bash]
+----
+
 ./dtcw ✅
 ./dtcw local install doctoolchain ✅
 ./dtcw local install java ✅
 ./dtcw downloadTemplate ✅
 # verify docToolchainConfig.groovy
 # verify ./src/docs
+
 ./dtcw generateHTML ✅
 # verify ./build/html5
+
 ./dtcw generatePDF ❌
 # verify ./build/pdf
+
 ./dtcw generateSite ❌
 # verify ./build/microsite/output
 
+cp $HOME/.doctoolchain/docToolchain-latest/src/docs/Sample.xlsx ./src/docs/.
+./dtcw exportExcel ✅
+# verify ./src/docs/excel
+
+./dtcw dependencyUpdates ✅
+# verify output
+
+./dtcw prependFilename ✅
+# verify that a :filename: attribute has been prepended to each .adoc file
+
+./dtcw previewSite ✅
+# verify that a server has been started on Port 8042 and serves the microsite
+
+autobuildSite
+collectIncludes
+convertToDocx
+convertToEpub
+copyThemes
+createReferenceDoc
+exportChangeLog
+exportConfluence
+exportContributors
+exportEA
+exportJiraIssues
+exportJiraSprintChangelogIssues
+exportMarkdown
+exportMetrics
+exportOpenAPI
+exportPPT
+exportStructurizr
+exportVisio
+fixEncoding
+generateDeck
+generateDocbook
+htmlSanityCheck
+publishToConfluence
+createTask
+----
+
+== ignored tasks
+
+[source,text]
+----
+exportDrawIo
 ----
