@@ -12,7 +12,7 @@ set -o pipefail
 
 # See https://github.com/docToolchain/docToolchain/releases for available versions.
 # Set DTC_VERSION to "latest" to get the latest, yet unreleased version.
-: "${DTC_VERSION:=latest}"
+: "${DTC_VERSION:=2.2.1}"
 
 # The 'generateSite' and 'copyThemes' tasks support DTC_SITETHEME, an URL of a theme.
 # export DTC_SITETHEME=https://....zip
@@ -51,14 +51,16 @@ ERR_ARG=2
 ERR_CODING=3
 
 main() {
-    assert_argument_exists "$@"
-    print_version_info
-
-    [ "${1}" = "--version" ] && exit 0
-
     # For debugging purpose at the top of the script
     arch=$(uname -m)
     os=$(uname -s)
+
+    print_version_info
+
+    assert_argument_exists "$@"
+
+    [ "${1}" = "--version" ] && exit 0
+
 
     available_environments=$(get_available_environments)
     echo "Available docToolchain environments:${available_environments}"
@@ -163,7 +165,7 @@ EOF
 }
 
 print_version_info() {
-    echo "dtcw ${DTCW_VERSION} - ${DTCW_GIT_HASH}"
+    echo "dtcw ${DTCW_VERSION} (${os} ${arch}) - ${DTCW_GIT_HASH}"
     echo "docToolchain ${DTC_VERSION}"
 }
 
@@ -609,7 +611,7 @@ show_os_related_info() {
         printf "%s\n" \
             "" \
             "Bash is running on WSL which might cause problems with plantUML." \
-            "See https://doctoolchain.github.io/docToolchain/#wsl for more details." \
+            "See https://doctoolchain.org/docToolchain/v2.0.x/010_manual/50_Frequently_asked_Questions.html#wsl for more details." \
             ""
     fi
 }
