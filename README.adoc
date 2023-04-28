@@ -23,10 +23,10 @@ cd -
 ./dtcw generateHTML ✅
 # verify ./build/html5
 
-./dtcw generatePDF ❌
+./dtcw generatePDF ✅
 # verify ./build/pdf
 
-./dtcw generateSite ❌
+./dtcw generateSite ✅
 # verify ./build/microsite/output
 
 cp $HOME/.doctoolchain/docToolchain-latest/src/docs/Sample.xlsx ./src/docs/.

@@ -420,7 +420,7 @@ unsupported Java version ${javaversion} [$JAVA_CMD]
         }
     }
     Write-Host "Using Java ${javaversion} [${JAVA_CMD}]"
-    return $True
+    return
 }
 
 function java_help_and_die()
